@@ -1,31 +1,29 @@
-﻿<div class="blazored-modal-container @Position">
-
-    <div class="blazored-modal-overlay" @onclick="HandleBackgroundClick"></div>
-
-    <div class="blazored-modal-wrapper">
-        <div class="@Class">
+﻿<div class="modal d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog @Class" role="document">
+        <div class="modal-content">
             @if (!HideHeader)
             {
-                <div class="blazored-modal-header">
-                    <h3 class="blazored-modal-title">@Title</h3>
+                <div class="modal-header">
+                    <h5 class="modal-title">@Title</h5>
                     @if (!HideCloseButton)
                     {
-                        <button type="button" class="blazored-modal-close" @onclick="(() => Parent.CancelInstance(Id))">
-                            <span>&times;</span>
+                        <button type="button" class="close" @onclick="(() => Parent.CancelInstance(Id))">
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     }
                 </div>
             }
-            <div class="blazored-modal-content">
-                <CascadingValue Value="this">
-                    @Content
-                </CascadingValue>
-            </div>
+            <CascadingValue Value="this">
+                @Content
+            </CascadingValue>
         </div>
     </div>
 </div>
 
-@code {
+<div class="modal-backdrop show" @onclick="HandleBackgroundClick"></div>
+
+@code 
+{
     [CascadingParameter] private BlazoredModal Parent { get; set; }
     [CascadingParameter] private ModalOptions GlobalModalOptions { get; set; }
 
@@ -34,7 +32,6 @@
     [Parameter] public RenderFragment Content { get; set; }
     [Parameter] public Guid Id { get; set; }
 
-    private string Position { get; set; }
     private string Class { get; set; }
     private bool HideHeader { get; set; }
     private bool HideCloseButton { get; set; }
@@ -82,44 +79,10 @@
 
     private void ConfigureInstance()
     {
-        Position = SetPosition();
         Class = SetClass();
         HideHeader = SetHideHeader();
         HideCloseButton = SetHideCloseButton();
         DisableBackgroundCancel = SetDisableBackgroundCancel();
-    }
-
-    private string SetPosition()
-    {
-        ModalPosition position;
-        if (Options.Position.HasValue)
-        {
-            position = Options.Position.Value;
-        }
-        else if (GlobalModalOptions.Position.HasValue)
-        {
-            position = GlobalModalOptions.Position.Value;
-        }
-        else
-        {
-            position = ModalPosition.Center;
-        }
-
-        switch (position)
-        {
-            case ModalPosition.Center:
-                return "blazored-modal-center";
-            case ModalPosition.TopLeft:
-                return "blazored-modal-topleft";
-            case ModalPosition.TopRight:
-                return "blazored-modal-topright";
-            case ModalPosition.BottomLeft:
-                return "blazored-modal-bottomleft";
-            case ModalPosition.BottomRight:
-                return "blazored-modal-bottomright";
-            default:
-                return "blazored-modal-center";
-        }
     }
 
     private string SetClass()
